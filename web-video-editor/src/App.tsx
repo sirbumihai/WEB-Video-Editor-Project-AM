@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
 import { fetchFile } from "@ffmpeg/util";
-import { loadFfmpegCore, buildTrimCommand } from "./ffmpegHelper";
+import { loadFfmpegCore, buildTrimCommand, applyFadeIn } from "./ffmpegHelper";
 import TimelineEditor from "./components/TimelineEditor";
 
 function App() {
@@ -11,6 +11,8 @@ function App() {
   const [outputURL, setOutputURL] = useState("");
   const [status, setStatus] = useState("Așteptare...");
   const [processing, setProcessing] = useState(false);
+  const [fadeInStart, setFadeInStart] = useState<number>(0); // Momentul de început
+  const [fadeInDuration, setFadeInDuration] = useState<number>(3); // Durata fade in
 
   // Parametri "trim"
   const [startTime, setStartTime] = useState("");
@@ -91,6 +93,43 @@ function App() {
     }
   };
 
+  const applyFadeInEffect = async () => {
+    if (!outputURL) {
+      setStatus("Nu există un videoclip procesat pentru a aplica fade in.");
+      return;
+    }
+
+    setProcessing(true);
+    setStatus("Se aplică efectul de fade in...");
+    try {
+      const ffmpeg = ffmpegRef.current;
+
+      // Citește fișierul procesat anterior
+      const fileData = await fetch(outputURL).then((res) => res.arrayBuffer());
+      await ffmpeg.writeFile("processed.mp4", new Uint8Array(fileData));
+
+      // Aplică efectul de fade in
+      await applyFadeIn(
+        ffmpeg,
+        "processed.mp4",
+        "fadein_output.mp4",
+        fadeInStart,
+        fadeInDuration
+      );
+
+      // Citește fișierul rezultat
+      const data = await ffmpeg.readFile("fadein_output.mp4");
+      const url = URL.createObjectURL(new Blob([data], { type: "video/mp4" }));
+      setOutputURL(url);
+      setStatus("Efectul de fade in a fost aplicat cu succes!");
+    } catch (error) {
+      setStatus("Eroare la aplicarea efectului de fade in.");
+      console.error(error);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   // Reset
   const reset = () => {
     setVideoFile(null);
@@ -115,6 +154,11 @@ function App() {
           onReset={reset}
           processing={processing}
           status={status}
+          fadeInStart={fadeInStart}
+          fadeInDuration={fadeInDuration}
+          setFadeInStart={setFadeInStart}
+          setFadeInDuration={setFadeInDuration}
+          onApplyFadeIn={applyFadeInEffect}
         />
       ) : (
         <p style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>

@@ -16,6 +16,11 @@ type TimelineEditorProps = {
   onReset: () => void;
   processing: boolean;
   status: string;
+  fadeInStart: number;
+  fadeInDuration: number;
+  setFadeInStart: (val: number) => void;
+  setFadeInDuration: (val: number) => void;
+  onApplyFadeIn: () => void;
 };
 
 const TimelineEditor = ({
@@ -30,6 +35,11 @@ const TimelineEditor = ({
   onReset,
   processing,
   status,
+  fadeInStart,
+  fadeInDuration,
+  setFadeInStart,
+  setFadeInDuration,
+  onApplyFadeIn,
 }: TimelineEditorProps) => {
   return (
     <div className="editor-layout" style={{ display: "flex", height: "100vh" }}>
@@ -61,6 +71,35 @@ const TimelineEditor = ({
         ) : (
           <p style={{ marginTop: "10px" }}>Nu există video de previzualizat</p>
         )}
+        {/* Efecte de tranziție */}
+        <div style={{ marginTop: "10px" }}>
+          <h3>Efecte Video</h3>
+          <label>
+            Fade In Start (secunde):
+            <input
+              type="number"
+              value={fadeInStart}
+              onChange={(e) => setFadeInStart(parseFloat(e.target.value))}
+              style={{ marginLeft: "5px" }}
+            />
+          </label>
+          <label style={{ marginLeft: "10px" }}>
+            Fade In Duration (secunde):
+            <input
+              type="number"
+              value={fadeInDuration}
+              onChange={(e) => setFadeInDuration(parseFloat(e.target.value))}
+              style={{ marginLeft: "5px" }}
+            />
+          </label>
+          <button
+            onClick={onApplyFadeIn}
+            disabled={processing}
+            style={{ marginLeft: "10px", padding: "5px 10px" }}
+          >
+            Aplică Fade In
+          </button>
+        </div>
 
         {/* Controale de tăiere */}
         <TrimControls

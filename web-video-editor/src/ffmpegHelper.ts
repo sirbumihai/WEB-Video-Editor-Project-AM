@@ -23,3 +23,29 @@ export const buildTrimCommand = (start: string, end: string): string[] => {
   command.push("-c", "copy", "output.mp4");
   return command;
 };
+
+export const applyFadeIn = async (
+  ffmpeg: FFmpeg,
+  inputFile: string,
+  outputFile: string,
+  fadeInStart: number,
+  fadeInDuration: number
+) => {
+  const command = [
+    "-i",
+    inputFile,
+    "-vf",
+    `fade=t=in:st=${fadeInStart}:d=${fadeInDuration}`,
+    "-c:v",
+    "libx264", // Codec video eficient
+    "-preset",
+    "ultrafast", // Reduce timpul de procesare
+    "-crf",
+    "23", // Calitate video echilibrată (mai mare = mai rapid)
+    "-c:a",
+    "copy", // Nu recodificăm audio pentru a economisi timp
+    outputFile,
+  ];
+
+  await ffmpeg.exec(command);
+};
