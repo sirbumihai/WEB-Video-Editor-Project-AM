@@ -32,12 +32,34 @@ function App() {
   }, []);
 
   // Upload fișier video
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setVideoFile(file);
     setOutputURL("");
     setStatus(`Fișierul ${file.name} încărcat.`);
+
+    // Procesăm videoclipul imediat după ce este selectat
+    setProcessing(true);
+    setStatus("Se procesează video-ul...");
+    try {
+      const ffmpeg = ffmpegRef.current;
+      const fileData = await fetchFile(file);
+      await ffmpeg.writeFile("input.mp4", fileData);
+
+      const command = buildTrimCommand("", ""); // Procesăm întregul videoclip
+      await ffmpeg.exec(command);
+
+      const data = await ffmpeg.readFile("output.mp4");
+      const url = URL.createObjectURL(new Blob([data], { type: "video/mp4" }));
+      setOutputURL(url);
+      setStatus("Procesare completă!");
+    } catch (error) {
+      setStatus("Eroare la procesarea video-ului.");
+      console.error(error);
+    } finally {
+      setProcessing(false);
+    }
   };
 
   // Procesare video (trim)

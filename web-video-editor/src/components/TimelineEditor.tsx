@@ -45,7 +45,12 @@ const TimelineEditor = ({
         <h2>Editor Video - Stil WeVideo</h2>
         <h3>Media</h3>
         <div style={{ marginTop: "10px" }}>
-          <input type="file" accept="video/*" onChange={onFileChange} />
+          <input
+            type="file"
+            accept="video/*"
+            onChange={onFileChange}
+            disabled={processing}
+          />
         </div>
         <p style={{ marginTop: "10px" }}>{videoFileName || "Niciun fișier"}</p>
         <p style={{ marginTop: "5px" }}>{status}</p>
