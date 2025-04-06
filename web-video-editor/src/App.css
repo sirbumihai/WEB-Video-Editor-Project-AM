@@ -1,0 +1,54 @@
+/* src/App.css */
+
+/* Stil general */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  background: #121212;
+  color: #fff;
+}
+
+.editor-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.editor-header {
+  background: #333;
+  color: #fff;
+  padding: 10px;
+}
+
+.media-sidebar {
+  background: #2b2b2b;
+  color: #fff;
+  width: 220px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.editor-preview-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+/* Timeline personalizat */
+.timeline-container {
+  background: #444;
+  color: #fff;
+  padding: 5px;
+}
+
+.timeline-tracks {
+  height: 100px;
+  overflow-x: auto;
+  background: #333;
+  padding: 5px;
+}
+
+/* Poți extinde cu ce vrei tu */
